@@ -56,7 +56,7 @@ SHELL
 		# Do some Docker configuration and setup some basic Docker container
 		rancher.vm.provision "file", source: "./daemon.json", destination: "daemon.json"
 		rancher.vm.provision "shell", privileged: true, env: {"docker_registry" => settings.fetch("ip", "193.168.33.10")}, inline: <<SHELL
-			cp /home/vagrant/deamon.json /etc/docker
+			cp /home/vagrant/daemon.json /etc/docker
 			systemctl daemon-reload
 			systemctl restart docker
 
@@ -145,7 +145,7 @@ SHELL
 	  # Do some Docker configuration and setup some basic Docker container
 	  node.vm.provision "file", source: "./daemon.json", destination: "daemon.json"
 	  node.vm.provision "shell", privileged: true, inline: <<SHELL
-	    cp /home/vagrant/deamon.json /etc/docker
+	    cp /home/vagrant/daemon.json /etc/docker
 	    systemctl daemon-reload
 	    systemctl restart docker
 SHELL
@@ -197,7 +197,7 @@ SHELL
 	  # Do some Docker configuration and setup some basic Docker container
 	  node.vm.provision "file", source: "./daemon.json", destination: "daemon.json"
 	  node.vm.provision "shell", privileged: true, inline: <<SHELL
-	    cp /home/vagrant/deamon.json /etc/docker
+	    cp /home/vagrant/daemon.json /etc/docker
 	    systemctl daemon-reload
 	    systemctl restart docker
 SHELL

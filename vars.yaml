@@ -13,7 +13,7 @@
       - host: "5000"
         guest: "5000"
     synced_folder:
-      host: ".\\data\\rancher"
+      host: "./data/rancher"
       guest: "/data"
 
   vm_storage:
