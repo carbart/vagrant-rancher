@@ -61,11 +61,14 @@ SHELL
 			systemctl restart docker
 
 			# cleanup
-			docker stop $(docker ps -a -q) && docker system prune -a -f && docker system prune --volumes -f
+			docker stop $(docker ps -a -q)
+			docker rm $(docker ps -a -q)
+			# if you want to remove really everything
+			# docker system prune -a -f && docker system prune --volumes -f
 
 			docker run -d --restart=unless-stopped -p 8080:8080 --name rancher-server rancher/server
 			docker run -d --restart=unless-stopped -p 5000:5000 --name registry registry:2
-			docker run -d --restart=unless-stopped -p 80:80 --name registry-frontend \
+			docker run -d --restart=unless-stopped -p 8000:80 --name registry-frontend \
 				-e ENV_DOCKER_REGISTRY_HOST=$docker_registry \
 				-e ENV_DOCKER_REGISTRY_PORT=5000 \
 				konradkleine/docker-registry-frontend:v2

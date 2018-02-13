@@ -6,8 +6,8 @@
       - "dockerhub.local.net"
       - "git.local.net"
     forwarded_ports:
-      - host: "80"
-        guest: "80"
+      - host: "8000"
+        guest: "8000"
       - host: "8080"
         guest: "8080"
       - host: "5000"
