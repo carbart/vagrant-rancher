@@ -25,6 +25,8 @@
   vm_docker_1:
     ip: "193.168.33.12"
     hostname: "node1.local.net"
+    aliases:
+      - "elk.local.net"
 
   vm_docker_2:
     ip: "193.168.33.13"

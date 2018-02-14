@@ -27,7 +27,7 @@ Vagrant.configure("2") do |config|
 		rancher.vm.synced_folder settings["synced_folder"]["host"], settings["synced_folder"]["guest"], mount_options: ["dmode=0775", "fmode=0775"]
 
 		rancher.vm.provider :virtualbox do |vb|
-			vb.memory = "2048"
+			vb.memory = "1024"
 			vb.gui = false
 		end
 
@@ -105,7 +105,7 @@ SHELL
 
 	# ============================================================================
 	# NODE 1
-	config.vm.define "node1",  autostart: false do |node|
+	config.vm.define "node1",  autostart: true do |node|
 	  settings = vars["vm_docker_1"]
 	  node.vm.box = "bento/ubuntu-16.04"
 	  node.vm.synced_folder "data", "/vagrant", disabled: true
@@ -119,7 +119,7 @@ SHELL
 	  end
 
 	  node.vm.provider :virtualbox do |vb|
-	    vb.memory = "1024"
+	    vb.memory = "4096"
 	    vb.gui = false
 	  end
 
@@ -153,11 +153,13 @@ SHELL
 	    systemctl restart docker
 SHELL
 
+		# this setting is important for ELK (Elasticsearch), it also needs at least 4GB RAM
+		node.vm.provision "elk-settings", type: "shell", privileged: true, inline: "sysctl -w vm.max_map_count=262144"
 	end
 
 	# ============================================================================
 	# NODE 2
-	config.vm.define "node2",  autostart: false do |node|
+	config.vm.define "node2",  autostart: true do |node|
 	  settings = vars["vm_docker_2"]
 	  node.vm.box = "bento/ubuntu-16.04"
 	  node.vm.synced_folder "data", "/vagrant", disabled: true
@@ -178,14 +180,14 @@ SHELL
 	  # Prepare the hosts setings
 	  node.vm.provision "file", source: "./hosts.config", destination: "hosts.config"
 	  node.vm.provision "file", source: "./hostsmerger.sh", destination: "hostsmerger.sh"
-	  node.vm.provision "shell", privileged: true, inline: <<SHELL
+	  node.vm.provision "hosts-settings", type: "shell", privileged: true, inline: <<SHELL
 	    cd /home/vagrant
 	    chmod a+x hostsmerger.sh
 	    ./hostsmerger.sh
 SHELL
 
 	  # Setup the Docker Environment
-	  node.vm.provision "shell", privileged: true, inline: <<SHELL
+	  node.vm.provision "docker-environment", type: "shell", privileged: true, inline: <<SHELL
 	    apt-get update
 	    apt-get -y install apt-transport-https ca-certificates curl
 
@@ -199,11 +201,14 @@ SHELL
 
 	  # Do some Docker configuration and setup some basic Docker container
 	  node.vm.provision "file", source: "./daemon.json", destination: "daemon.json"
-	  node.vm.provision "shell", privileged: true, inline: <<SHELL
+	  node.vm.provision "docker-settings", type: "shell", privileged: true, inline: <<SHELL
 	    cp /home/vagrant/daemon.json /etc/docker
 	    systemctl daemon-reload
 	    systemctl restart docker
 SHELL
+
+		# this setting is important for ELK (Elasticsearch), it also needs at least 4GB RAM
+		node.vm.provision "elk-settings", type: "shell", privileged: true, inline: "sysctl -w vm.max_map_count=262144"
 
 	end
 
