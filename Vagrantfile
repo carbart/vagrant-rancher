@@ -51,6 +51,7 @@ SHELL
 
 			apt-get update
 			apt-get -y install docker-ce=17.12.0~ce-0~ubuntu
+			usermod -aG docker vagrant
 SHELL
 
 		# Do some Docker configuration and setup some basic Docker container
@@ -72,6 +73,16 @@ SHELL
 				-e ENV_DOCKER_REGISTRY_HOST=$docker_registry \
 				-e ENV_DOCKER_REGISTRY_PORT=5000 \
 				konradkleine/docker-registry-frontend:v2
+SHELL
+
+		# Setup Go Language
+		rancher.vm.provision "golang", type: "shell", privileged: true, inline: <<SHELL
+			cd ~ &&  curl -LO https://dl.google.com/go/go1.10.linux-amd64.tar.gz
+			tar -C /usr/local -xzf go1.10.linux-amd64.tar.gz
+			ln -s /data/go /home/vagrant/go
+			echo "export PATH=$PATH:/usr/local/go/bin/" > /etc/profile.d/golang.sh
+			echo "export GOPATH=/usr/local/go" >> /etc/profile.d/golang.sh
+			curl https://glide.sh/get | sh
 SHELL
 
 	end
@@ -143,6 +154,7 @@ SHELL
 
 	    apt-get update
 	    apt-get -y install docker-ce=17.12.0~ce-0~ubuntu
+		usermod -aG docker vagrant
 SHELL
 
 	  # Do some Docker configuration and setup some basic Docker container
@@ -197,6 +209,7 @@ SHELL
 
 	    apt-get update
 	    apt-get -y install docker-ce=17.12.0~ce-0~ubuntu
+		usermod -aG docker vagrant
 SHELL
 
 	  # Do some Docker configuration and setup some basic Docker container
